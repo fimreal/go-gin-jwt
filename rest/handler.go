@@ -37,6 +37,18 @@ func NewHandler() (HandlerInterface, error) {
 	}, nil
 }
 
+// @BasePath /account
+
+// Go API godoc
+// @Summary User signin
+// @Schemes
+// @Description add user
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param data body models.AddUserData true "新录入账号"
+// @Success 200 {object} models.LoginResult
+// @Router /signin [post]
 func (h *Handler) AddUser(c *gin.Context) {
 	var userData models.AddUserData
 	if err := c.ShouldBindJSON(&userData); err != nil {
@@ -81,6 +93,16 @@ func (h *Handler) AddUser(c *gin.Context) {
 	c.JSON(http.StatusOK, LoginResult)
 }
 
+// Go API godoc
+// @Summary User login
+// @Schemes
+// @Description user login with authrization
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param data body models.LoginRequest true "登入账号"
+// @Success 200 {object} models.LoginResult "access token & refresh token"
+// @Router /login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var err error
 	var loginRequest models.LoginRequest
@@ -131,6 +153,16 @@ func (h *Handler) Login(c *gin.Context) {
 
 }
 
+// Go API godoc
+// @Summary check access_token
+// @Schemes
+// @Description check access_token
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param data body models.LoginRequest true "access_token"
+// @Success 200 {object} bool "access_token 是否有效"
+// @Router /valid [post]
 func (h *Handler) IsValid(c *gin.Context) {
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -153,6 +185,20 @@ func (h *Handler) IsValid(c *gin.Context) {
 	}
 }
 
+type refreshToken struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
+// Go API godoc
+// @Summary renew access_token
+// @Schemes
+// @Description renew access_token with refresh_token
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param data body refreshToken true "refresh_token"
+// @Success 200 {object} string "refresh_token"
+// @Router /renew [post]
 func (h *Handler) RenewToken(c *gin.Context) {
 	// 解析请求
 	body, err := io.ReadAll(c.Request.Body)

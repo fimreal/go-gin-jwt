@@ -1,0 +1,134 @@
+definitions:
+  models.AddUserData:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  models.LoginRequest:
+    properties:
+      password:
+        type: string
+      user:
+        description: |-
+          UserID   int    `json:"user_id"`
+          Username string `json:"username"`
+        type: string
+    required:
+    - password
+    type: object
+  models.LoginResult:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+      user_id:
+        type: integer
+      username:
+        type: string
+    type: object
+  rest.refreshToken:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: user login with authrization
+      parameters:
+      - description: 登入账号
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: access token & refresh token
+          schema:
+            $ref: '#/definitions/models.LoginResult'
+      summary: User login
+      tags:
+      - Account
+  /renew:
+    post:
+      consumes:
+      - application/json
+      description: renew access_token with refresh_token
+      parameters:
+      - description: refresh_token
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/rest.refreshToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: refresh_token
+          schema:
+            type: string
+      summary: renew access_token
+      tags:
+      - Account
+  /signin:
+    post:
+      consumes:
+      - application/json
+      description: add user
+      parameters:
+      - description: 新录入账号
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddUserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.LoginResult'
+      summary: User signin
+      tags:
+      - Account
+  /valid:
+    post:
+      consumes:
+      - application/json
+      description: check access_token
+      parameters:
+      - description: access_token
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: access_token 是否有效
+          schema:
+            type: boolean
+      summary: check access_token
+      tags:
+      - Account
+swagger: "2.0"
